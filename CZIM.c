@@ -72,6 +72,8 @@ int myc = 0;
 int dis1 = 0;
 int dis2 = 0;
 int is_on_color = 0;
+int X = 0;
+int Y = 0;
 #define CsBot_AI_C//DO NOT delete this line
 
 DLL_EXPORT void SetGameID(int GameID)
@@ -456,6 +458,14 @@ void Game0() {
 }
 void Game1()
 {
+	if (PositionX != 0)
+	{
+		X = PositionX;
+	}
+	if (PositionY != 0)
+	{
+		Y = PositionY;
+	}
 	if (SuperDuration > 0)
 	{
 		SuperDuration--;
@@ -623,10 +633,10 @@ void Game1()
 		}
 
 	}
-	else if (storage == 3) {
-		if (sqrt((PositionX - 260) ^ 2 + (PositionY - 355) ^ 2)>(sqrt(PositionX ^ 2 + PositionY ^ 2)))
+	else if (storage >= 3) {
+		if (sqrt((X - 260) ^ 2 + (Y - 355) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
 		{
-			fi = atan(PositionY / PositionX)*(180 / 3.14);
+			fi = atan(Y / X)*(180 / M_PI);
 			myc = fi + 90;
 
 			if (Compass>(myc)) 
@@ -640,9 +650,9 @@ void Game1()
 				CurAction = 180;
 			}
 		}
-		if (sqrt((PositionX - 260) ^ 2 + (PositionY - 355) ^ 2)<(sqrt(PositionX ^ 2 + PositionY ^ 2)))
+		if (sqrt((X - 260) ^ 2 + (Y - 355) ^ 2)<(sqrt(X ^ 2 + Y ^ 2)))
 		{
-			fi = atan((260 - PositionY) / (355 - PositionX))*(180 / M_PI);
+			fi = atan((260 - Y) / (355 - X))*(180 / M_PI);
 			myc = fi + 270;
 
 			if (Compass>(myc))
