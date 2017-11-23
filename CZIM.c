@@ -532,6 +532,15 @@ void Game1()
 		Duration = 0;
 
 	}
+	else if( (CSLeft_R > 205 && CSLeft_G <60 && CSLeft_B < 60)
+		||
+		(CSRight_R > 205 &&  CSRight_G <60 && CSRight_B < 60)){
+		// Super Object
+		CurAction = 109;
+		Duration = 49;
+		SX = 0;
+		SY = 0;
+	}
 	else if (CSRight_R < 60 && CSRight_G > 200 && CSRight_B < 60) {
 		// Green Point From Right
 		if (storage < 6) {
@@ -640,8 +649,8 @@ void Game1()
 
 	}
 	else if (SX != 0 || SY != 0) {
-		fi = atan(abs(PositionY - SY) / abs(PositionX - SX) )*(180 / M_PI);
-		if (SY> PositionY && SX > PositionX) {
+		fi = atan((Y - SY  )/ ((X - SX))+1) *(180 / M_PI);
+		if (SY> Y && SX > X) {
 			myc = fi + 270;
 			if (Compass>(myc))
 			{
@@ -654,7 +663,7 @@ void Game1()
 				CurAction = 180;
 			}
 		}
-		if (SY< PositionY && SX < PositionX) {
+		if (SY< Y && SX < X) {
 			myc = fi + 90;
 			if (Compass>(myc))
 			{
@@ -667,7 +676,7 @@ void Game1()
 				CurAction = 172;
 			}
 		}
-		if (SY> PositionY && SX < PositionX) {
+		if (SY> Y && SX < X) {
 			myc = fi + 0;
 			if (Compass>(myc))
 			{
@@ -680,7 +689,7 @@ void Game1()
 				CurAction = 172;
 			}
 		}
-		if (SY< PositionY && SX > PositionX) {
+		if (SY< Y && SX > X) {
 			myc = fi + 180;
 			if (Compass>(myc))
 			{
@@ -696,10 +705,10 @@ void Game1()
 
 
 	}
-	else if (storage >= 3) {
+	else if (storage >= 1) {
 		if (sqrt((X - 260) ^ 2 + (Y - 355) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
 		{
-			fi = atan(Y / X)*(180 / M_PI);
+			fi = atan(Y / ((X)+1))*(180 / M_PI);
 			myc = fi + 90;
 
 			if (Compass>(myc)) 
