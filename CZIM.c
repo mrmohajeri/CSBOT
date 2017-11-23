@@ -74,6 +74,8 @@ int dis2 = 0;
 int is_on_color = 0;
 int X = 0;
 int Y = 0;
+int SX = 0;
+int SY = 0;
 #define CsBot_AI_C//DO NOT delete this line
 
 DLL_EXPORT void SetGameID(int GameID)
@@ -458,6 +460,10 @@ void Game0() {
 }
 void Game1()
 {
+	if (SuperObj_X != 0 || SuperObj_Y != 0)  {
+		SX = SuperObj_X;
+		SY = SuperObj_Y;
+	}
 	if (PositionX != 0)
 	{
 		X = PositionX;
@@ -633,6 +639,63 @@ void Game1()
 		}
 
 	}
+	else if (SX != 0 || SY != 0) {
+		fi = atan(abs(PositionY - SY) / abs(PositionX - SX) )*(180 / M_PI);
+		if (SY> PositionY && SX > PositionX) {
+			myc = fi + 270;
+			if (Compass>(myc))
+			{
+				Duration = 0;
+				CurAction = 170;
+			}
+			if (Compass<(myc))
+			{
+				Duration = 0;
+				CurAction = 180;
+			}
+		}
+		if (SY< PositionY && SX < PositionX) {
+			myc = fi + 90;
+			if (Compass>(myc))
+			{
+				Duration = 0;
+				CurAction = 171;
+			}
+			if (Compass<(myc))
+			{
+				Duration = 0;
+				CurAction = 172;
+			}
+		}
+		if (SY> PositionY && SX < PositionX) {
+			myc = fi + 0;
+			if (Compass>(myc))
+			{
+				Duration = 0;
+				CurAction = 171;
+			}
+			if (Compass<(myc))
+			{
+				Duration = 0;
+				CurAction = 172;
+			}
+		}
+		if (SY< PositionY && SX > PositionX) {
+			myc = fi + 180;
+			if (Compass>(myc))
+			{
+				Duration = 0;
+				CurAction = 171;
+			}
+			if (Compass<(myc))
+			{
+				Duration = 0;
+				CurAction = 172;
+			}
+		}
+
+
+	}
 	else if (storage >= 3) {
 		if (sqrt((X - 260) ^ 2 + (Y - 355) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
 		{
@@ -738,7 +801,18 @@ void Game1()
 		LED_1 = 0;
 		MyState = 0;
 		break;
-
+	case 171:
+		WheelLeft = 2;
+		WheelRight = 4;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+	case 172:
+		WheelLeft = 2;
+		WheelRight = 4;
+		LED_1 = 0;
+		MyState = 0;
+		break;
 
 
 		// -------------------- 
