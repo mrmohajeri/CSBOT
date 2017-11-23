@@ -100,7 +100,7 @@ DLL_EXPORT int IsGameEnd()
 DLL_EXPORT char* GetDebugInfo()
 {
 	char info[1024];
-	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;dis1=%d;dis2=%d;dx=%d;dy=%d;fi=%d;myc=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState,dis1,dis2,dx,dy,fi,myc);
+	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;dis1=%d;dis2=%d;dx=%d;dy=%d;fi=%d;myc=%d;SX=%d;SY=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState, dis1, dis2, dx, dy, fi, myc,SX,SY);
 	return info;
 }
 
@@ -486,7 +486,7 @@ void Game1()
 		CurAction = 800;
 	}
 	//map
-	else if (PositionX<5 || 340<PositionX || PositionY<5 || 260<PositionY)
+	else if (X<5 || 340<X || Y<5 || 260<Y)
 	{
 		Duration = 0;
 		CurAction = 801;
@@ -532,9 +532,9 @@ void Game1()
 		Duration = 0;
 
 	}
-	else if( (CSLeft_R > 205 && CSLeft_G <60 && CSLeft_B < 60)
+	else if( (CSLeft_R > 190 && CSLeft_G <60 && CSLeft_B > 200)
 		||
-		(CSRight_R > 205 &&  CSRight_G <60 && CSRight_B < 60)){
+		(CSRight_R > 190 &&  CSRight_G <60 && CSRight_B > 200)){
 		// Super Object
 		CurAction = 109;
 		Duration = 49;
@@ -668,12 +668,12 @@ void Game1()
 			if (Compass>(myc))
 			{
 				Duration = 0;
-				CurAction = 171;
+				CurAction = 170;
 			}
 			if (Compass<(myc))
 			{
 				Duration = 0;
-				CurAction = 172;
+				CurAction = 180;
 			}
 		}
 		if (SY> Y && SX < X) {
@@ -681,12 +681,12 @@ void Game1()
 			if (Compass>(myc))
 			{
 				Duration = 0;
-				CurAction = 171;
+				CurAction = 170;
 			}
 			if (Compass<(myc))
 			{
 				Duration = 0;
-				CurAction = 172;
+				CurAction = 180;
 			}
 		}
 		if (SY< Y && SX > X) {
@@ -694,18 +694,18 @@ void Game1()
 			if (Compass>(myc))
 			{
 				Duration = 0;
-				CurAction = 171;
+				CurAction = 170;
 			}
 			if (Compass<(myc))
 			{
 				Duration = 0;
-				CurAction = 172;
+				CurAction = 180;
 			}
 		}
 
 
 	}
-	else if (storage >= 1) {
+	else if (storage >= 3) {
 		if (sqrt((X - 260) ^ 2 + (Y - 355) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
 		{
 			fi = atan(Y / ((X)+1))*(180 / M_PI);
