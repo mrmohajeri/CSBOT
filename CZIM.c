@@ -76,6 +76,9 @@ int X = 0;
 int Y = 0;
 int SX = 0;
 int SY = 0;
+int Time1 = 0;
+int TimeOld = 0;
+int chaseBlue = 0;
 #define CsBot_AI_C//DO NOT delete this line
 
 DLL_EXPORT void SetGameID(int GameID)
@@ -459,7 +462,11 @@ void Game0() {
 	}
 }
 void Game1()
-{
+{		chaseblue = 1;
+
+	if(Time >= 420){
+		Time1++;
+	}
 	if (SuperObj_X != 0 || SuperObj_Y != 0)  {
 		SX = SuperObj_X;
 		SY = SuperObj_Y;
@@ -705,8 +712,28 @@ void Game1()
 
 
 	}
+	else if (/*(Time1 > 0 && Time1 < 30)*/ chaseBlue ==1) {
+		fi = atan( (300 - Y) / ((X-220)+1))*(180 / M_PI);
+		myc = fi + 270;
+		if ( ((CSLeft_R < 30) && ( CSLeft_G > 140 && CSLeft_G < 180) &&  (CSLeft_B > 220)) || ((CSRight_R < 30) && (CSRight_G > 140 && CSRight_G < 180) && (CSRight_B > 220))) {
+			CurAction = 1000;
+		}
+		else {
+			if (Compass > (myc))
+			{
+				Duration = 0;
+				CurAction = 170;
+			}
+			if (Compass < (myc))
+			{
+				Duration = 0;
+				CurAction = 180;
+			}
+		}
+		
+	}
 	else if (storage >= 3) {
-		if (sqrt((X - 260) ^ 2 + (Y - 355) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
+		if (sqrt((X - 355) ^ 2 + (Y - 260) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
 		{
 			fi = atan(Y / ((X)+1))*(180 / M_PI);
 			myc = fi + 90;
@@ -722,7 +749,7 @@ void Game1()
 				CurAction = 180;
 			}
 		}
-		if (sqrt((X - 260) ^ 2 + (Y - 355) ^ 2)<(sqrt(X ^ 2 + Y ^ 2)))
+		if (sqrt((X - 355) ^ 2 + (Y - 260) ^ 2)<(sqrt(X ^ 2 + Y ^ 2)))
 		{
 			fi = atan((260 - Y) / (355 - X))*(180 / M_PI);
 			myc = fi + 270;
