@@ -22,7 +22,6 @@ LED States:
 
 
 */
-//add 
 #define CsBot_AI_H//DO NOT delete this line
 #ifndef CSBOT_REAL
 #include <windows.h>
@@ -464,7 +463,7 @@ void Game0() {
 }
 void Game1()
 {		
-	chaseBlue1 = 1;
+	chaseBlue1 = 0;
 	chaseBlue2 = 0;
 	if(Time >= 420){
 		Time1++;
@@ -656,7 +655,7 @@ void Game1()
 			}
 		}
 
-	}
+	}/*
 	else if (chaseBlue1==1 && chaseBlue2 == 0) {
 		if (CSLeft_R >= 200 && CSLeft_G >= 200 && CSLeft_B >= 200 && CSRight_R >= 200 && CSRight_G >= 200 && CSRight_B >= 200) {
 			Duration = 0;
@@ -674,7 +673,7 @@ void Game1()
 			chaseBlue1 = 0;
 			chaseBlue2 = 1;
 		}
-	}
+	}*/
 	else if (SX != 0 || SY != 0) {
 		fi = atan((Y - SY  )/ ((X - SX))+1) *(180 / M_PI);
 		if (SY> Y && SX > X) {
@@ -731,7 +730,7 @@ void Game1()
 		}
 
 
-	}
+	}/*
 	else if (Time1 < 30) {
 		fi = atan( (300 - Y) / ((X-220)+1))*(180 / M_PI);
 		myc = fi + 270;
@@ -752,7 +751,7 @@ void Game1()
 			}
 		}
 		
-	}
+	}*/
 	else if (storage >= 3) {
 		if (sqrt((X - 355) ^ 2 + (Y - 260) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
 		{
