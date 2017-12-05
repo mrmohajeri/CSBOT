@@ -75,10 +75,10 @@ int X = 0;
 int Y = 0;
 int SX = 0;
 int SY = 0;
-int Time1 = 0;
-int TimeOld = 0;
-int chaseBlue1 = 0;
-int chaseBlue2 = 0;
+int N_R = 0;
+int N_G = 0;
+int N_B = 0;
+int zm = 0;
 #define CsBot_AI_C//DO NOT delete this line
 
 DLL_EXPORT void SetGameID(int GameID)
@@ -103,7 +103,7 @@ DLL_EXPORT int IsGameEnd()
 DLL_EXPORT char* GetDebugInfo()
 {
 	char info[1024];
-	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;dis1=%d;dis2=%d;dx=%d;dy=%d;fi=%d;myc=%d;SX=%d;SY=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState, dis1, dis2, dx, dy, fi, myc,SX,SY);
+	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;dis1=%d;dis2=%d;dx=%d;dy=%d;fi=%d;myc=%d;SX=%d;SY=%d;zm=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState, dis1, dis2, dx, dy, fi, myc, SX, SY, zm);
 	return info;
 }
 
@@ -463,11 +463,6 @@ void Game0() {
 }
 void Game1()
 {		
-	chaseBlue1 = 0;
-	chaseBlue2 = 0;
-	if(Time >= 420){
-		Time1++;
-	}
 	if (SuperObj_X != 0 || SuperObj_Y != 0)  {
 		SX = SuperObj_X;
 		SY = SuperObj_Y;
@@ -487,14 +482,15 @@ void Game1()
 	else if (Duration > 0)
 	{
 		Duration--;
-	}	//trap
-	else if (CSLeft_R >= 200 && CSLeft_R <= 255 && CSLeft_G >= 170 && CSLeft_G <= 255 && CSLeft_B >= 0 && CSLeft_B <= 70 && CSRight_R >= 200 && CSRight_R <= 255 && CSRight_G >= 170 && CSRight_G <= 255 && CSRight_B >= 0 && CSRight_B <= 70)
+	}	//khakestari bala
+	else if ((sqrt(pow((X - 80), 2) + pow((Y - 200), 2)) < 28) || (sqrt(pow((X - 275), 2) + pow((Y - 130), 2)) < 30) || (sqrt(pow((X - 80), 2) + pow((Y - 130), 2)) < 30))	
 	{
 		Duration = 0;
 		CurAction = 800;
 	}
+
 	//map
-	else if (X<5 || 340<X || Y<5 || 260<Y)
+	else if (X<5 || 345<X || Y<5 || 260<Y)
 	{
 		Duration = 0;
 		CurAction = 801;
@@ -525,7 +521,9 @@ void Game1()
 		CurAction = 106;
 		Duration = 49;
 		storage = 0;
-
+		N_R = 0;
+		N_B = 0;
+		N_G = 0;
 	}
 	else if (CSRight_B < 41 && CSRight_G > 80 && CSRight_R > 200 && storage > 0)
 	{
@@ -549,7 +547,7 @@ void Game1()
 		SX = 0;
 		SY = 0;
 	}
-	else if (CSRight_R < 60 && CSRight_G > 200 && CSRight_B < 60) {
+	else if (CSRight_R < 60 && CSRight_G > 200 && CSRight_B < 60 && N_G<2) {
 		// Green Point From Right
 		if (storage < 6) {
 
@@ -558,6 +556,7 @@ void Game1()
 				Duration = 49;
 				is_on_color = 1;
 				storage++;
+				N_G++;
 			}
 			else {
 				CurAction = 1000;
@@ -567,7 +566,7 @@ void Game1()
 		}
 
 	}
-	else if (CSLeft_R < 60 && CSLeft_G > 200 && CSLeft_B < 60) {
+	else if (CSLeft_R < 60 && CSLeft_G > 200 && CSLeft_B < 60 && N_G<2) {
 		// Green Point From Left
 		if (storage < 6) {
 			if (is_on_color == 0) {
@@ -575,6 +574,8 @@ void Game1()
 				Duration = 49;
 				is_on_color = 1;
 				storage++;
+				N_G++;
+
 			}
 			else {
 				CurAction = 1000;
@@ -584,7 +585,7 @@ void Game1()
 		}
 
 	}
-	else if (CSRight_R < 40 && CSRight_G < 40 && CSRight_B < 40) {
+	else if (CSRight_R < 40 && CSRight_G < 40 && CSRight_B < 40 && N_B<2) {
 		// Black Point From Right
 		if (storage < 6) {
 
@@ -593,6 +594,7 @@ void Game1()
 				Duration = 49;
 				is_on_color = 1;
 				storage++;
+				N_B++;
 			}
 			else {
 				CurAction = 1000;
@@ -602,7 +604,7 @@ void Game1()
 		}
 
 	}
-	else if (CSLeft_R < 40 && CSLeft_G < 40 && CSLeft_B < 40) {
+	else if (CSLeft_R < 40 && CSLeft_G < 40 && CSLeft_B < 40 && N_B<2) {
 		// Black Point From Left
 		if (storage < 6) {
 
@@ -611,6 +613,8 @@ void Game1()
 				Duration = 49;
 				is_on_color = 1;
 				storage++;
+				N_B++;
+
 			}
 			else {
 				CurAction = 1000;
@@ -620,7 +624,7 @@ void Game1()
 		}
 
 	}
-	else if (CSRight_R > 200 && CSRight_G < 60 && CSRight_B < 60) {
+	else if (CSRight_R > 200 && CSRight_G < 60 && CSRight_B < 60 && N_R<2) {
 		// Red Point From Right
 		if (storage < 6) {
 
@@ -629,6 +633,8 @@ void Game1()
 				Duration = 49;
 				is_on_color = 1;
 				storage++;
+				N_R++;
+
 			}
 			else {
 				CurAction = 1000;
@@ -638,7 +644,7 @@ void Game1()
 		}
 
 	}
-	else if (CSLeft_R > 200 && CSLeft_G < 60 && CSLeft_B < 60) {
+	else if (CSLeft_R > 200 && CSLeft_G < 60 && CSLeft_B < 60 && N_R<2) {
 		// Red Point From Left
 		if (storage < 6) {
 
@@ -647,6 +653,8 @@ void Game1()
 				Duration = 49;
 				is_on_color = 1;
 				storage++;
+				N_R++;
+
 			}
 			else {
 				CurAction = 1000;
@@ -655,25 +663,11 @@ void Game1()
 			}
 		}
 
-	}/*
-	else if (chaseBlue1==1 && chaseBlue2 == 0) {
-		if (CSLeft_R >= 200 && CSLeft_G >= 200 && CSLeft_B >= 200 && CSRight_R >= 200 && CSRight_G >= 200 && CSRight_B >= 200) {
-			Duration = 0;
-			CurAction = 152;
-		}
-		if (CSLeft_R >= 200 && CSLeft_G >= 200 && CSLeft_B >= 200) {
-			Duration = 0;
-			CurAction = 150;
-		}
-		if (CSRight_R >= 200 && CSRight_G >= 200 && CSRight_B >= 200) {
-			Duration = 0;
-			CurAction = 151;
-		}
-		if (Time1>30) {
-			chaseBlue1 = 0;
-			chaseBlue2 = 1;
-		}
-	}*/
+	}
+	else if ((CSLeft_R >= 130 && CSLeft_R < 215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
+		Duration = 0;
+		CurAction = 1000;
+	}
 	else if (SX != 0 || SY != 0) {
 		fi = atan((Y - SY  )/ ((X - SX))+1) *(180 / M_PI);
 		if (SY> Y && SX > X) {
@@ -730,28 +724,7 @@ void Game1()
 		}
 
 
-	}/*
-	else if (Time1 < 30) {
-		fi = atan( (300 - Y) / ((X-220)+1))*(180 / M_PI);
-		myc = fi + 270;
-		if ( ((CSLeft_R < 30) && ( CSLeft_G > 140 && CSLeft_G < 180) &&  (CSLeft_B > 220)) || ((CSRight_R < 30) && (CSRight_G > 140 && CSRight_G < 180) && (CSRight_B > 220))) {
-			CurAction = 1000;
-			chaseBlue1 = 1;
-		}
-		else {
-			if (Compass > (myc))
-			{
-				Duration = 0;
-				CurAction = 170;
-			}
-			if (Compass < (myc))
-			{
-				Duration = 0;
-				CurAction = 180;
-			}
-		}
-		
-	}*/
+	}
 	else if (storage >= 3) {
 		if (sqrt((X - 355) ^ 2 + (Y - 260) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
 		{
@@ -761,28 +734,29 @@ void Game1()
 			if (Compass>(myc)) 
 			{
 				Duration = 0;
-				CurAction = 170;
+				CurAction = 1700;
 			}
 			if (Compass<(myc))
 			{
 				Duration = 0;
-				CurAction = 180;
+				CurAction = 1800;
 			}
 		}
 		if (sqrt((X - 355) ^ 2 + (Y - 260) ^ 2)<(sqrt(X ^ 2 + Y ^ 2)))
 		{
+			
 			fi = atan((260 - Y) / (355 - X))*(180 / M_PI);
 			myc = fi + 270;
 
 			if (Compass>(myc))
 			{
 				Duration = 0;
-				CurAction = 170;
+				CurAction = 1700;
 			}
 			if (Compass<(myc))
 			{
 				Duration = 0;
-				CurAction = 180;
+				CurAction = 1800;
 			}
 		}
 
@@ -796,28 +770,20 @@ void Game1()
 
 	switch (CurAction)
 	{
-	case 150:
-		WheelLeft = 3;
-		WheelRight = 1;
-		LED_1 = 0;
-		MyState = 0;
-		break;
-	case 151:
-		WheelLeft = 1;
-		WheelRight = 3;
-		LED_1 = 0;
-		MyState = 0;
-		break;
-	case 152:
-		WheelLeft = -2;
-		WheelRight = 3;
+	case 800:
+
+		WheelLeft = -1;
+		WheelRight = -3;
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 1000:
-		// Move
 		WheelLeft = 2;
 		WheelRight = 2;
+		if ((CSLeft_R >= 130 && CSLeft_R <215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215) ) {
+			WheelLeft = 5;
+			WheelRight = 5;
+		}
 		LED_1 = 0;
 		MyState = 0;	
 		break;
@@ -860,10 +826,32 @@ void Game1()
 	case 170:
 		WheelLeft = 4;
 		WheelRight = 2;
+		zm = sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2));
+		if (sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2)) < 100) {
+			WheelLeft = 2;
+			WheelRight = 1;
+		}
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 180:
+		WheelLeft = 2;
+		WheelRight = 4;
+		zm = sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2));
+		if (sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2)) < 100) {
+			WheelLeft = 1;
+			WheelRight = 2;
+		}
+		LED_1 = 0;
+		MyState = 0;
+		break;
+	case 1700:
+		WheelLeft = 4;
+		WheelRight = 2;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+	case 1800:
 		WheelLeft = 2;
 		WheelRight = 4;
 		LED_1 = 0;
@@ -887,24 +875,44 @@ void Game1()
 	case 801:
 		WheelLeft = -1;
 		WheelRight = -3;
+		if ((CSLeft_R >= 130 && CSLeft_R <215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
+			Duration = 12;
+			WheelLeft = -1;
+			WheelRight = -5;
+		}
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 805:
 		WheelLeft = -1;
 		WheelRight = 1;
+		if ((CSLeft_R >= 130 && CSLeft_R < 215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
+			WheelLeft = -5;
+			WheelRight = 5;
+			Duration = 2;
+		}
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 806:
 		WheelLeft = 1;
 		WheelRight = -1;
+		if ((CSLeft_R >= 130 && CSLeft_R < 215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
+			WheelLeft = 5;
+			WheelRight = -5;
+			Duration = 2;
+		}
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 807:
 		WheelLeft = -1;
 		WheelRight = -3;
+		if ((CSLeft_R >= 130 && CSLeft_R < 215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
+			WheelLeft = -5;
+			WheelRight = -3;
+			Duration = 2;
+		}
 		LED_1 = 0;
 		MyState = 0;
 		break;
