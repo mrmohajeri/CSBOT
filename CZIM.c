@@ -519,7 +519,7 @@ void Game1()
 	{
 		// Deposit
 		CurAction = 106;
-		Duration = 49;
+		Duration = 51;
 		storage = 0;
 		N_R = 0;
 		N_B = 0;
@@ -767,7 +767,6 @@ void Game1()
 		Duration = 0;
 		CurAction = 1000;
 	}
-
 	switch (CurAction)
 	{
 	case 800:
@@ -873,15 +872,94 @@ void Game1()
 
 		// -------------------- 
 	case 801:
-		WheelLeft = -1;
-		WheelRight = -3;
-		if ((CSLeft_R >= 130 && CSLeft_R <215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
-			Duration = 12;
-			WheelLeft = -1;
-			WheelRight = -5;
-		}
 		LED_1 = 0;
 		MyState = 0;
+
+		if (X<5) {
+			if (Compass<90) {
+				WheelLeft = 2;
+				WheelRight = -1;
+			}
+			if (Compass<=180 && Compass>=90) {
+				WheelLeft = -1;
+				WheelRight = 2;
+
+			}
+			if (Compass>180) {
+				WheelLeft = 2;
+				WheelRight = 2;
+			}
+		}
+
+		if (345<X) {
+			if (Compass>=180 && Compass<270) {
+				WheelLeft = 2;
+				WheelRight = -1;
+			}
+			if (Compass>=270) {
+				WheelLeft = -1;
+				WheelRight = 2;
+
+			}
+			if (Compass<=180) {
+				WheelLeft = 2;
+				WheelRight = 2;
+			}
+		}
+
+		if (Y<5) {
+			if (Compass >= 180 && Compass<=270) {
+				WheelLeft = -1;
+				WheelRight = 2;
+				if ((CSLeft_R >= 130 && CSLeft_R <215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
+					Duration = 12;
+					WheelLeft = -3;
+					WheelRight = 5;
+				}
+			}
+			if (Compass <= 180 && Compass>=90) {
+				WheelLeft = 2;
+				WheelRight = -1;
+				if ((CSLeft_R >= 130 && CSLeft_R <215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
+					Duration = 12;
+					WheelLeft = 5;
+					WheelRight = -3;
+				}
+
+			}
+			if (Compass <= 90 || Compass >=270) {
+				WheelLeft = 2;
+				WheelRight = 2;
+				if ((CSLeft_R >= 130 && CSLeft_R <215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
+					Duration = 12;
+					WheelLeft = 5;
+					WheelRight = 5;
+				}
+			}
+		}
+
+		if (260<Y) {
+			if (Compass >= 0 && Compass <= 90) {
+				WheelLeft = -1;
+				WheelRight = 2;
+			}
+			if (Compass <= 359 && Compass >= 270) {
+				WheelLeft = 2;
+				WheelRight = -1;
+
+			}
+			if ((Compass <= 270 && Compass>180) || (Compass >= 90 && Compass<=180)) {
+				WheelLeft = 2;
+				WheelRight = 2;
+			}
+		}
+
+
+
+
+
+
+
 		break;
 	case 805:
 		WheelLeft = -1;
