@@ -78,7 +78,6 @@ int SY = 0;
 int N_R = 0;
 int N_G = 0;
 int N_B = 0;
-int zm = 0;
 #define CsBot_AI_C//DO NOT delete this line
 
 DLL_EXPORT void SetGameID(int GameID)
@@ -103,7 +102,8 @@ DLL_EXPORT int IsGameEnd()
 DLL_EXPORT char* GetDebugInfo()
 {
 	char info[1024];
-	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;dis1=%d;dis2=%d;dx=%d;dy=%d;fi=%d;myc=%d;SX=%d;SY=%d;zm=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState, dis1, dis2, dx, dy, fi, myc, SX, SY, zm);
+	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState);
+
 	return info;
 }
 
@@ -167,7 +167,7 @@ DLL_EXPORT void GetCommand(int *AI_OUT)
 	AI_OUT[0] = WheelLeft;
 	AI_OUT[1] = WheelRight;
 	AI_OUT[2] = LED_1;
-	AI_OUT[3] = MyState;
+	AI_OUT[3] =  MyState;
 }
 void Game0() {
 	if (Time == 180)
@@ -482,13 +482,12 @@ void Game1()
 	else if (Duration > 0)
 	{
 		Duration--;
-	}	//khakestari bala
+	}	//khakestari bala - trap
 	else if ((sqrt(pow((X - 80), 2) + pow((Y - 200), 2)) < 28) || (sqrt(pow((X - 275), 2) + pow((Y - 130), 2)) < 30) || (sqrt(pow((X - 80), 2) + pow((Y - 130), 2)) < 30))	
 	{
 		Duration = 0;
 		CurAction = 800;
 	}
-
 	//map
 	else if (X<5 || 345<X || Y<5 || 260<Y)
 	{
@@ -669,7 +668,7 @@ void Game1()
 		CurAction = 1000;
 	}
 	else if (SX != 0 || SY != 0) {
-		fi = atan((Y - SY  )/ ((X - SX))+1) *(180 / M_PI);
+		/*fi = atan((Y - SY  )/ ((X - SX))+1) *(180 / M_PI);
 		if (SY> Y && SX > X) {
 			myc = fi + 270;
 			if (Compass>(myc))
@@ -721,12 +720,102 @@ void Game1()
 				Duration = 0;
 				CurAction = 180;
 			}
-		}
+		}*/
+		if (SX>X && SY>Y)
+		{
+			fi = atan((SY - Y) / (SX - X))*(180 / 3.14);
+			myc = fi +270;
 
+			if (Compass>(myc + 2))
+			{
+
+				Duration = 0;
+				CurAction = 1700;
+			}
+			if (Compass<(myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1800;
+			}
+			if ((myc + 2)>Compass>(myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1000;
+			}
+		}
+		////////////N_2
+		if (SX<X && SY>Y)
+		{
+			fi = atan((Y - SY) / (SX - X))*(180 / 3.14);
+			myc =  fi;
+
+			if (Compass>(myc + 2))
+			{
+
+				Duration = 0;
+				CurAction = 1700;
+			}
+			if (Compass<(myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1800;
+			}
+			if ((myc + 2)>Compass>(myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1000;
+			}
+
+		}
+		///////////N_3
+		if (SX<X && SY<Y)
+		{
+			fi = atan((Y - SY) / (X - SX))*(180 / 3.14);
+			myc = fi +90;
+
+			if (Compass > (myc + 2))
+			{
+				Duration = 0;
+				CurAction = 1700;
+			}
+			if (Compass<(myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1800;
+			}
+			if ((myc + 2)>Compass>(myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1000;
+			}
+		}
+		/////////////N_4
+		if (SX>X && SY<Y)
+		{
+			fi = atan((SY - Y) / (X - SX))*(180 / 3.14);
+			myc = fi +180;
+
+			if (Compass>(myc + 2))
+			{
+
+				Duration = 0;
+				CurAction = 1700;
+			}
+			if (Compass<(myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1800;
+			}
+			if ((myc + 2)>Compass>(myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1000;
+			}
+		}
 
 	}
 	else if (storage >= 3) {
-		if (sqrt((X - 355) ^ 2 + (Y - 260) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
+		/*if (sqrt((X - 355) ^ 2 + (Y - 260) ^ 2)>(sqrt(X ^ 2 + Y ^ 2)))
 		{
 			fi = atan(Y / ((X)+1))*(180 / M_PI);
 			myc = fi + 90;
@@ -757,9 +846,50 @@ void Game1()
 			{
 				Duration = 0;
 				CurAction = 1800;
+			}*/
+		if (X <= 180 && Y <= 140)
+		{
+			fi = atan(Y / X)*(180 / M_PI);
+			myc = fi + 90;
+			if (Compass >= (myc + 2))
+			{
+
+				Duration = 0;
+				CurAction = 1700;
+			}
+			if (Compass <= (myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1800;
+			}
+			if ((myc + 5)>Compass && Compass> (myc - 5))
+			{
+				Duration = 0;
+				CurAction = 1000;
 			}
 		}
+		if (X>180 || Y>140)
+		{
+			fi = atan((260 - Y) / (360 - X))*(180 / M_PI);
+			myc = fi + 270;
 
+			if (Compass >= (myc + 2))
+			{
+
+				Duration = 0;
+				CurAction = 1700;
+			}
+			if (Compass <= (myc - 2))
+			{
+				Duration = 0;
+				CurAction = 1800;
+			}
+			if ((myc + 5)>Compass && Compass>(myc - 5))
+			{
+				Duration = 0;
+				CurAction = 1000;
+			}
+		}
 	}
 	else if (true)
 	{
@@ -825,7 +955,7 @@ void Game1()
 	case 170:
 		WheelLeft = 4;
 		WheelRight = 2;
-		zm = sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2));
+		//zfi = sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2));
 		if (sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2)) < 100) {
 			WheelLeft = 2;
 			WheelRight = 1;
@@ -836,7 +966,7 @@ void Game1()
 	case 180:
 		WheelLeft = 2;
 		WheelRight = 4;
-		zm = sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2));
+		//zfi = sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2));
 		if (sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2)) < 100) {
 			WheelLeft = 1;
 			WheelRight = 2;
@@ -845,14 +975,14 @@ void Game1()
 		MyState = 0;
 		break;
 	case 1700:
-		WheelLeft = 4;
-		WheelRight = 2;
+		WheelLeft = 3;
+		WheelRight = 1;
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 1800:
-		WheelLeft = 2;
-		WheelRight = 4;
+		WheelLeft = 1;
+		WheelRight = 3;
 		LED_1 = 0;
 		MyState = 0;
 		break;
@@ -967,7 +1097,6 @@ void Game1()
 		if ((CSLeft_R >= 130 && CSLeft_R < 215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) || (CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
 			WheelLeft = -5;
 			WheelRight = 5;
-			Duration = 2;
 		}
 		LED_1 = 0;
 		MyState = 0;
