@@ -1,0 +1,94 @@
+ ////////////////red
+    else if((CSLeft_R>=200 && CSLeft_R<=255 && CSLeft_G>=0 && CSLeft_G<=55 && CSLeft_B>=0 && CSLeft_B<=55 && anbar<=6) || (CSRight_R>=200 && CSRight_R<=255 && CSRight_G>=0 && CSRight_G<=55 && CSRight_B>=0 && CSRight_B<=55 && anbar<=5))
+    {
+        Duration = 49;
+        CurAction =5;
+		anbar++;
+    }
+	////////////////black
+	 else if((CSLeft_R>=15 && CSLeft_R<=40 && CSLeft_G>=15 && CSLeft_G<=40 && CSLeft_B>=15 && CSLeft_B<=40 && anbar<=6)||(CSRight_R>=15 && CSRight_R<=40 && CSRight_G>=15 && CSRight_G<=40 && CSRight_B>=15 && CSRight_B<=40 && anbar<=5))
+    {
+        Duration = 46;
+        CurAction =5;
+		anbar++;
+    }
+	////////////////green
+	else if((CSLeft_R>=0 && CSLeft_R<=55 && CSLeft_G>=0 && CSLeft_G<=255 && CSLeft_B>=0 && CSLeft_B<=55 && anbar<=6) || (CSRight_R>=0 && CSRight_R<=55 && CSRight_G>=0 && CSRight_G<=255 && CSRight_B>=0 && CSRight_B<=55  && anbar<=5))
+    {
+        Duration = 49;
+        CurAction =5;
+        anbar++;
+    }
+
+
+       
+////////////////red
+    else if((CSLeft_R>=200 && CSLeft_R<=255 && CSLeft_G>=0 && CSLeft_G<=55 && CSLeft_B>=0 && CSLeft_B<=55 && N_R<=1) || (CSRight_R>=200 && CSRight_R<=255 && CSRight_G>=0 && CSRight_G<=55 && CSRight_B>=0 && CSRight_B<=55 && N_R<=1))
+    {
+        Duration = 49;
+        CurAction =5;
+		anbar++;
+		N_R++;
+    }
+	////////////////black
+	 else if((CSLeft_R>=15 && CSLeft_R<=40 && CSLeft_G>=15 && CSLeft_G<=40 && CSLeft_B>=15 && CSLeft_B<=40 && N_B<=1)||(CSRight_R>=15 && CSRight_R<=40 && CSRight_G>=15 && CSRight_G<=40 && CSRight_B>=15 && CSRight_B<=40 && N_B<=1))
+    {
+        Duration = 46;
+        CurAction =5;
+		anbar++;
+		N_B++;
+    }
+	////////////////green
+	else if((CSLeft_R>=0 && CSLeft_R<=55 && CSLeft_G>=0 && CSLeft_G<=255 && CSLeft_B>=0 && CSLeft_B<=55 && N_G<=1) || (CSRight_R>=0 && CSRight_R<=55 && CSRight_G>=0 && CSRight_G<=255 && CSRight_B>=0 && CSRight_B<=55  && N_G<=1))
+    {
+        Duration = 49;
+        CurAction =5;
+        anbar++;
+		N_G++;
+    } 
+
+
+
+
+
+ ///////up
+	else if(X<13 && X>332 && Y>255)
+	{ 
+		Duration = 1;
+		CurAction=24;
+	}
+	//////down
+	else if(X<13 && X>332 && Y<10)
+	{ 
+		Duration = 1;
+		CurAction= 24;
+	}
+	///////right
+	else if(X>332 && Y<10 && Y>254)
+	{ 
+		Duration = 1;
+		CurAction= 25;
+	}
+	//////left
+	else if(X<13 && Y<20 && Y>241)
+	{ 
+		Duration = 1;
+		CurAction= 25;
+	}
+
+
+
+
+
+       case 24:
+            WheelLeft=-1;
+            WheelRight=-3;
+            LED_1=0;
+            MyState=0;
+            break;
+	case 25:
+            WheelLeft=-3;
+            WheelRight=-1;
+            LED_1=0;
+            MyState=0;
+            break;
