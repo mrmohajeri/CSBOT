@@ -1,0 +1,218 @@
+
+	/////////Follow_anbar_Left
+	else if(CSLeft_R>=190 && CSLeft_R<=255 && CSLeft_G>=70 && CSLeft_G<=130 && CSLeft_B>=0 && CSLeft_B<=30 && CSRight_R>=190 && CSRight_R<=255 && CSRight_G>=210 && CSRight_G<=255 && CSRight_B>=250 && CSRight_B<=255 && anbar>=2)
+    {
+        Duration = 0;
+        CurAction =200;
+    }
+	/////////Follow_anbar_Right
+	else if(CSRight_R>=190 && CSRight_R<=255 && CSRight_G>=70 && CSRight_G<=130 && CSRight_B>=0 && CSRight_B<=40 && CSLeft_R>=190 && CSLeft_R<=255 && CSLeft_G>=210 && CSLeft_G<=255 && CSLeft_B>=250 && CSLeft_B<=255 && anbar>=2)
+    {
+        Duration = 0;
+        CurAction =201;
+    }
+	////////anbar
+	 else if(CSRight_R>=190 && CSRight_R<=255 && CSRight_G>=70 && CSRight_G<=130 && CSRight_B>=0 && CSRight_B<=40 && CSLeft_R>=190 && CSLeft_R<=255 && CSLeft_G>=70 && CSLeft_G<=130 && CSLeft_B>=0 && CSLeft_B<=40 && anbar>=2)
+    {
+        Duration = 49;
+        CurAction =202;
+	anbar=0;
+    }
+	//////Trap-Both
+	else if(CSLeft_R>=117 && CSLeft_R<=245 && CSLeft_G>=202 && CSLeft_G<=255 && CSLeft_B>=0 && CSLeft_B<=188 && CSRight_R>=117 && CSRight_R<=245 && CSRight_G>=202 && CSRight_G<=255 && CSRight_B>=0 && CSRight_B<=188)
+    {
+        Duration = 1;
+        CurAction =203;
+    }
+	//////Trap-R
+    else if(CSRight_R>=117 && CSRight_R<=245 && CSRight_G>=202 && CSRight_G<=255 && CSRight_B>=0 && CSRight_B<=188)
+    {
+        Duration = 1;
+        CurAction =204;
+    }
+	////Trap-L
+    else if(CSLeft_R>=117 && CSLeft_R<=245 && CSLeft_G>=200 && CSLeft_G<=255 && CSLeft_B>=0 && CSLeft_B<=188)
+    {
+        Duration = 1;
+        CurAction =205;
+    }
+	////////////////Red
+    else if((CSLeft_R>=200 && CSLeft_R<=255 && CSLeft_G>=0 && CSLeft_G<=55 && CSLeft_B>=0 && CSLeft_B<=55 && anbar<=5) || (CSRight_R>=200 && CSRight_R<=255 && CSRight_G>=0 && CSRight_G<=55 && CSRight_B>=0 && CSRight_B<=55 && anbar<=5))
+    {
+        Duration = 49;
+        CurAction =206;
+	anbar++;
+    }
+	////////////////Black
+	 else if((CSLeft_R>=15 && CSLeft_R<=55 && CSLeft_G>=15 && CSLeft_G<=55 && CSLeft_B>=15 && CSLeft_B<=55 && anbar<=5)||(CSRight_R>=15 && CSRight_R<=55 && CSRight_G>=15 && CSRight_G<=55 && CSRight_B>=15 && CSRight_B<=55 && anbar<=5))
+    {
+        Duration = 46;
+        CurAction =206;
+	anbar++;
+    }
+	////////////////Green
+	else if((CSLeft_R>=0 && CSLeft_R<=55 && CSLeft_G>=230 && CSLeft_G<=255 && CSLeft_B>=0 && CSLeft_B<=55 && anbar<=5) || (CSRight_R>=0 && CSRight_R<=55 && CSRight_G>=230 && CSRight_G<=255 && CSRight_B>=0 && CSRight_B<=55  && anbar<=5))
+    {
+        Duration = 49;
+        CurAction =206;
+        anbar++;
+    }
+        case 200:
+            WheelLeft=-1;
+            WheelRight=1;
+            LED_1=0;
+            MyState=0;
+            break;
+	case 201:
+            WheelLeft=1;
+            WheelRight=-1;
+            LED_1=0;
+            MyState=0;
+            break;
+        case 202:
+            WheelLeft=0;
+            WheelRight=0;
+            LED_1=2;
+            MyState=0;
+            break;
+        case 203:
+            WheelLeft=-1;
+            WheelRight=-3;
+            LED_1=0;
+            MyState=0;
+            break;
+        case 204:
+            WheelLeft=-2;
+            WheelRight=-1;
+            LED_1=0;
+            MyState=0;
+            break;
+        case 205:
+            WheelLeft=-1;
+            WheelRight=-2;
+            LED_1=0;
+            MyState=0;
+            break;
+        case 206:
+            WheelLeft=0;
+            WheelRight=0;
+            LED_1=1;
+            MyState=0;
+            break;
+.............................................................................................................................................
+	/////////Follow_anbar_Left
+	else if(CSLeft_R>=190 && CSLeft_R<=255 && CSLeft_G>=70 && CSLeft_G<=130 && CSLeft_B>=0 && CSLeft_B<=30 && CSRight_R>=190 && CSRight_R<=255 && CSRight_G>=210 && CSRight_G<=255 && CSRight_B>=250 && CSRight_B<=255 && anbar>=2)
+    {
+        Duration = 0;
+        CurAction =202;
+    }
+	/////////Follow_anbar_Right
+	else if(CSRight_R>=190 && CSRight_R<=255 && CSRight_G>=70 && CSRight_G<=130 && CSRight_B>=0 && CSRight_B<=40 && CSLeft_R>=190 && CSLeft_R<=255 && CSLeft_G>=210 && CSLeft_G<=255 && CSLeft_B>=250 && CSLeft_B<=255 && anbar>=2)
+    {
+        Duration = 0;
+        CurAction =201;
+    }
+	////////anbar
+	 else if(CSRight_R>=190 && CSRight_R<=255 && CSRight_G>=70 && CSRight_G<=130 && CSRight_B>=0 && CSRight_B<=40 && CSLeft_R>=190 && CSLeft_R<=255 && CSLeft_G>=70 && CSLeft_G<=130 && CSLeft_B>=0 && CSLeft_B<=40 && anbar>=2)
+    {
+        Duration = 49;
+        CurAction =202;
+	anbar=0;
+        N_R=0;
+        N_B=0;
+        N_G=0;
+        L=1;
+    }
+	//////Trap-Both
+	else if(CSLeft_R>=117 && CSLeft_R<=245 && CSLeft_G>=202 && CSLeft_G<=255 && CSLeft_B>=0 && CSLeft_B<=188 && CSRight_R>=117 && CSRight_R<=245 && CSRight_G>=202 && CSRight_G<=255 && CSRight_B>=0 && CSRight_B<=188)
+    {
+        Duration = 1;
+        CurAction =203;
+    }
+	//////Trap-R
+        else if(CSRight_R>=117 && CSRight_R<=245 && CSRight_G>=202 && CSRight_G<=255 && CSRight_B>=0 && CSRight_B<=188)
+    {
+        Duration = 1;
+        CurAction =204;
+    }
+	////Trap-L
+        else if(CSLeft_R>=117 && CSLeft_R<=245 && CSLeft_G>=200 && CSLeft_G<=255 && CSLeft_B>=0 && CSLeft_B<=188)
+    {
+        Duration = 1;
+        CurAction =205;
+    }
+        ///////////Color-SO
+        else if((CSLeft_R>=210 && CSLeft_R<=230 && CSLeft_G>=20 && CSLeft_G<=60 && CSLeft_B>=250 && CSLeft_B<=255 && anbar<=5) || (CSRight_R>=210 && CSRight_R<=230 && CSRight_G>=20 && CSRight_G<=60 && CSRight_B>=250 && CSRight_B<=255 && anbar<=5 ) || (((sqrt((X-X_SO)^2))<=2) && ((sqrt((Y-Y_SO)^2))<=2) && (X_SO !=0 && Y_SO !=0)))
+	{
+        Duration = 49;
+        CurAction =206;
+	anbar++;
+        X_SO=0;
+        Y_SO=0;
+    }
+	////////////////Red
+        else if((CSLeft_R>=200 && CSLeft_R<=255 && CSLeft_G>=0 && CSLeft_G<=55 && CSLeft_B>=0 && CSLeft_B<=55 && anbar<=5 && N_R<=1) || (CSRight_R>=200 && CSRight_R<=255 && CSRight_G>=0 && CSRight_G<=55 && CSRight_B>=0 && CSRight_B<=55 && anbar<=5 && N_R<=1))
+    {
+        Duration = 49;
+        CurAction =206;
+	anbar++;
+        N_R++;
+    }
+	////////////////Black
+        else if((CSLeft_R>=15 && CSLeft_R<=55 && CSLeft_G>=15 && CSLeft_G<=55 && CSLeft_B>=15 && CSLeft_B<=55 && anbar<=5 && N_B<=1)||(CSRight_R>=15 && CSRight_R<=55 && CSRight_G>=15 && CSRight_G<=55 && CSRight_B>=15 && CSRight_B<=55 && anbar<=5 && N_B<=1))
+    {
+        Duration = 46;
+        CurAction =206;
+	anbar++;
+        N_B++;
+    }
+	////////////////Green
+	else if((CSLeft_R>=0 && CSLeft_R<=55 && CSLeft_G>=230 && CSLeft_G<=255 && CSLeft_B>=0 && CSLeft_B<=55 && anbar<=5 && N_G<=1) || (CSRight_R>=0 && CSRight_R<=55 && CSRight_G>=230 && CSRight_G<=255 && CSRight_B>=0 && CSRight_B<=55  && anbar<=5 && N_G<=1))
+    {
+        Duration = 49;
+        CurAction =206;
+        anbar++;
+        N_G++;
+    }
+        case 200:
+            WheelLeft=-1;
+            WheelRight=1;
+            LED_1=0;
+            MyState=0;
+            break;
+	case 201:
+            WheelLeft=1;
+            WheelRight=-1;
+            LED_1=0;
+            MyState=0;
+            break;
+        case 202:
+            WheelLeft=0;
+            WheelRight=0;
+            LED_1=2;
+            MyState=0;
+            break;
+        case 203:
+            WheelLeft=-1;
+            WheelRight=-3;
+            LED_1=0;
+            MyState=0;
+            break;
+        case 204:
+            WheelLeft=-2;
+            WheelRight=-1;
+            LED_1=0;
+            MyState=0;
+            break;
+        case 205:
+            WheelLeft=-1;
+            WheelRight=-2;
+            LED_1=0;
+            MyState=0;
+            break;
+        case 206:
+            WheelLeft=0;
+            WheelRight=0;
+            LED_1=1;
+            MyState=0;
+            break;
