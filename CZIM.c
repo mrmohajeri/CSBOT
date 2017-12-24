@@ -551,7 +551,9 @@ void Game1()
 		SX = 0;
 		SY = 0;
 	}
-	else if (CSRight_R < 60 && CSRight_G > 200 && CSRight_B < 60 && N_G<2) {
+	else if ( (CSRight_R < 60 && CSRight_G > 200 && CSRight_B < 60 && N_G<2) 
+			|| 
+			(CSLeft_R < 60 && CSLeft_G > 200 && CSLeft_B < 60 && N_G<2) ) {
 		// Green Point From Right
 		if (storage < 6) {
 
@@ -570,26 +572,9 @@ void Game1()
 		}
 
 	}
-	else if (CSLeft_R < 60 && CSLeft_G > 200 && CSLeft_B < 60 && N_G<2) {
-		// Green Point From Left
-		if (storage < 6) {
-			if (is_on_color == 0) {
-				CurAction = 109;
-				Duration = 49;
-				is_on_color = 1;
-				storage++;
-				N_G++;
-
-			}
-			else {
-				CurAction = 1000;
-				Duration = 0;
-				is_on_color = 0;
-			}
-		}
-
-	}
-	else if (CSRight_R < 40 && CSRight_G < 40 && CSRight_B < 40 && N_B<2) {
+	else if ( (CSRight_R < 40 && CSRight_G < 40 && CSRight_B < 40 && N_B<2)
+				||
+			(CSLeft_R < 40 && CSLeft_G < 40 && CSLeft_B < 40 && N_B<2) ) {
 		// Black Point From Right
 		if (storage < 6) {
 
@@ -608,48 +593,10 @@ void Game1()
 		}
 
 	}
-	else if (CSLeft_R < 40 && CSLeft_G < 40 && CSLeft_B < 40 && N_B<2) {
-		// Black Point From Left
-		if (storage < 6) {
-
-			if (is_on_color == 0) {
-				CurAction = 109;
-				Duration = 49;
-				is_on_color = 1;
-				storage++;
-				N_B++;
-
-			}
-			else {
-				CurAction = 1000;
-				Duration = 0;
-				is_on_color = 0;
-			}
-		}
-
-	}
-	else if (CSRight_R > 200 && CSRight_G < 60 && CSRight_B < 60 && N_R<2) {
+	else if ( (CSRight_R > 200 && CSRight_G < 60 && CSRight_B < 60 && N_R<2) 
+			||
+			(CSLeft_R > 200 && CSLeft_G < 60 && CSLeft_B < 60 && N_R<2)) {
 		// Red Point From Right
-		if (storage < 6) {
-
-			if (is_on_color == 0) {
-				CurAction = 109;
-				Duration = 49;
-				is_on_color = 1;
-				storage++;
-				N_R++;
-
-			}
-			else {
-				CurAction = 1000;
-				Duration = 0;
-				is_on_color = 0;
-			}
-		}
-
-	}
-	else if (CSLeft_R > 200 && CSLeft_G < 60 && CSLeft_B < 60 && N_R<2) {
-		// Red Point From Left
 		if (storage < 6) {
 
 			if (is_on_color == 0) {
