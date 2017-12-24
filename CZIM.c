@@ -102,7 +102,7 @@ DLL_EXPORT int IsGameEnd()
 DLL_EXPORT char* GetDebugInfo()
 {
 	char info[1024];
-	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState);
+	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;X=%d;Y=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState,X,Y);
 
 	return info;
 }
@@ -169,6 +169,11 @@ DLL_EXPORT void GetCommand(int *AI_OUT)
 	AI_OUT[2] = LED_1;
 	AI_OUT[3] =  MyState;
 }
+
+int distance(int x,int y) {
+	return sqrt(pow((X - x), 2) + pow((Y - y), 2));
+}
+
 void Game0() {
 	if (Time == 180)
 	{
@@ -483,7 +488,7 @@ void Game1()
 	{
 		Duration--;
 	}	//khakestari bala - trap
-	else if ((sqrt(pow((X - 80), 2) + pow((Y - 200), 2)) < 28) || (sqrt(pow((X - 275), 2) + pow((Y - 130), 2)) < 30) || (sqrt(pow((X - 80), 2) + pow((Y - 130), 2)) < 30))	
+	else if ( ((distance(80,200)) < 28) || ((distance(275,130)) < 30) || ((distance(80,130)) < 30))	
 	{
 		Duration = 0;
 		CurAction = 800;
@@ -956,7 +961,7 @@ void Game1()
 		WheelLeft = 4;
 		WheelRight = 2;
 		//zfi = sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2));
-		if (sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2)) < 100) {
+		if ((distance(SX,SY)) < 100) {
 			WheelLeft = 2;
 			WheelRight = 1;
 		}
@@ -967,7 +972,7 @@ void Game1()
 		WheelLeft = 2;
 		WheelRight = 4;
 		//zfi = sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2));
-		if (sqrt(((X - SX) ^ 2) + ((Y - SY) ^ 2)) < 100) {
+		if ((distance(SX, SY)) < 100) {
 			WheelLeft = 1;
 			WheelRight = 2;
 		}
