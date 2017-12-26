@@ -11,7 +11,8 @@
 // ONLY C Code can be compiled.
 //
 /////////////////////////////////////
-
+//ToDO
+//Multiple color points and super objects using 2D array
 
 /*
 
@@ -78,6 +79,21 @@ int SY = 0;
 int N_R = 0;
 int N_G = 0;
 int N_B = 0;
+
+//
+
+int PRR = 200;
+int PRG = 60;
+int PRB = 60
+
+int PGR = 60;
+int PGG = 200;
+int PGB = 60;
+
+int PBR = 40;
+int PBG = 40;
+int PBB = 40;
+//
 #define CsBot_AI_C//DO NOT delete this line
 
 DLL_EXPORT void SetGameID(int GameID)
@@ -523,7 +539,7 @@ void Game1()
 	{
 		// Deposit
 		CurAction = 106;
-		Duration = 51;
+		Duration = 60;
 		storage = 0;
 		N_R = 0;
 		N_B = 0;
@@ -551,9 +567,9 @@ void Game1()
 		SX = 0;
 		SY = 0;
 	}
-	else if ( (CSRight_R < 60 && CSRight_G > 200 && CSRight_B < 60 && N_G<2) 
+	else if ( (CSRight_R < PGR && CSRight_G > PGG && CSRight_B < PGB && N_G<2) 
 			|| 
-			(CSLeft_R < 60 && CSLeft_G > 200 && CSLeft_B < 60 && N_G<2) ) {
+			(CSLeft_R < PGR && CSLeft_G > PGG && CSLeft_B < PGB && N_G<2) ) {
 		// Green Point From Right
 		if (storage < 6) {
 
@@ -572,9 +588,9 @@ void Game1()
 		}
 
 	}
-	else if ( (CSRight_R < 40 && CSRight_G < 40 && CSRight_B < 40 && N_B<2)
+	else if ( (CSRight_R < PBR && CSRight_G < PBG && CSRight_B < PBB && N_B<2)
 				||
-			(CSLeft_R < 40 && CSLeft_G < 40 && CSLeft_B < 40 && N_B<2) ) {
+			(CSLeft_R < PBR && CSLeft_G < PBG && CSLeft_B < PBB && N_B<2) ) {
 		// Black Point From Right
 		if (storage < 6) {
 
@@ -593,9 +609,9 @@ void Game1()
 		}
 
 	}
-	else if ( (CSRight_R > 200 && CSRight_G < 60 && CSRight_B < 60 && N_R<2) 
+	else if ( (CSRight_R > PRR && CSRight_G < PRG && CSRight_B < PRB && N_R<2) 
 			||
-			(CSLeft_R > 200 && CSLeft_G < 60 && CSLeft_B < 60 && N_R<2)) {
+			(CSLeft_R > PRR && CSLeft_G < PRG && CSLeft_B < PRB && N_R<2)) {
 		// Red Point From Right
 		if (storage < 6) {
 
