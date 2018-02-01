@@ -84,7 +84,7 @@ int N_B = 0;
 
 int PRR = 200;
 int PRG = 60;
-int PRB = 60
+int PRB = 60;
 
 int PGR = 60;
 int PGG = 200;
@@ -558,6 +558,7 @@ void Game1()
 		Duration = 0;
 
 	}
+
 	else if( (CSLeft_R > 190 && CSLeft_G <60 && CSLeft_B > 200)
 		||
 		(CSRight_R > 190 &&  CSRight_G <60 && CSRight_B > 200)){
