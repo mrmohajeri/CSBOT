@@ -16,6 +16,26 @@ typedef unsigned char bool;
 static const bool False = 0;
 static const bool True = 1;
 #endif
+typedef struct {
+	int x, y;
+} Vector;
+Vector new_vector(int xa, int ya) {
+	Vector v;
+	v.x = xa;
+	v.y = ya;
+	return v;
+}
+typedef struct {
+	int xa, ya, xb, yb;
+} Area;
+Area new_area(int xa, int ya, int xb, int yb) {
+	Area v;
+	v.xa = min(xa, xb);
+	v.ya = min(ya, yb);
+	v.xb = max(xa, xb);
+	v.yb = max(ya, yb);
+	return v;
+}
 
 char AI_MyID[2] = { '0','2' };
 
@@ -49,6 +69,11 @@ int LED_1 = 0;
 int MyState = 0;
 int AI_SensorNum = 13;
 
+int timerSuperObject = 0;
+int timerSearch = 0;
+int tryCounter = 0;
+int MS = 0;
+int MN = 0;
 int o = 0;
 int t;
 int targetX;
@@ -60,21 +85,23 @@ int shouldDepositValue = 6;
 int SOX = 0;
 int SOY = 0;
 int timer;
+int timerO;
 bool circularTrap = false;
 bool followingDeposit = false;
 bool followingSuperObject = false;
-int X = 0;
-int Y = 0;
+int X = 1;
+int Y = 1;
 int storage = 0;
 int is_on_color = 0;
 int NR = 0;
 int NG = 0;
 int NB = 0;
 int defaultSpeed = 3;
-int minimumDeposit = 2;
+int minimumDeposit = 5;
 bool isOnMap2 = false;
 int counter = 0;
-int Matris[2][12] = { 0 };
+int Matris[2][30] = { 0 };
+void setMatris();
 // Cordinates
 
 // Trap
@@ -83,8 +110,8 @@ int trapY[] = { 200,130,130 };
 int trapR[] = { 25,30,30 };
 
 // Deposit Area
-int depositX[] = { 15,340 };
-int depositY[] = { 15,250 };
+int depositX[] = { 240 /*, 144*/};
+int depositY[] = { 252 /*, 131*/};
 
 // Middle Map
 int mmX = mapX / 2;
@@ -117,9 +144,9 @@ int PBG = 40;
 int PBB = 40;
 
 // Deposit Area
-int DAR = 200;
-int DAG = 80;
-int DAB = 41;
+int DAR = 180;
+int DAG = 130;
+int DAB = 60;
 
 // SuperObject
 int SOR = 190;
@@ -158,13 +185,13 @@ DLL_EXPORT int IsGameEnd()
 DLL_EXPORT char* GetDebugInfo()
 {
 	char info[1024];
-	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;counter=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState,counter);
+	sprintf(info, "Duration=%d;SuperDuration=%d;bGameEnd=%d;CurAction=%d;CurGame=%d;SuperObj_Num=%d;SuperObj_X=%d;SuperObj_Y=%d;Teleport=%d;LoadedObjects=%d;US_Front=%d;US_Left=%d;US_Right=%d;CSLeft_R=%d;CSLeft_G=%d;CSLeft_B=%d;CSRight_R=%d;CSRight_G=%d;CSRight_B=%d;PositionX=%d;PositionY=%d;TM_State=%d;Compass=%d;Time=%d;WheelLeft=%d;WheelRight=%d;LED_1=%d;MyState=%d;counter=%d;counterX=%d;counterY=%d;storage=%d;NR=%d;NG=%d;NB=%d;", Duration, SuperDuration, bGameEnd, CurAction, CurGame, SuperObj_Num, SuperObj_X, SuperObj_Y, Teleport, LoadedObjects, US_Front, US_Left, US_Right, CSLeft_R, CSLeft_G, CSLeft_B, CSRight_R, CSRight_G, CSRight_B, PositionX, PositionY, TM_State, Compass, Time, WheelLeft, WheelRight, LED_1, MyState, counter, Matris[0][counter], Matris[1][counter], storage, NR, NG, NB);
 	return info;
 }
 
 DLL_EXPORT char* GetTeamName()
 {
-	return "HikiMax";
+	return "CodeX";
 }
 
 DLL_EXPORT int GetCurAction()
@@ -228,21 +255,14 @@ DLL_EXPORT void GetCommand(int *AI_OUT)
 }
 
 bool isOnGreenPoint() {
-	if ((CSRight_R < PGR && CSRight_G > PGG && CSRight_B > PGB) ||
-		(CSLeft_R < PGR && CSLeft_G > PGG && CSLeft_B < PGB))
+	if ( ((CSRight_R < PGR && CSRight_G > PGG && CSRight_B > PGB) ||
+		(CSLeft_R < PGR && CSLeft_G > PGG && CSLeft_B < PGB)) ||
+		(CSLeft_R >= 30 && CSLeft_R <= 110 && CSLeft_G >= 150 && CSLeft_G <= 230 && CSLeft_B >= 30 && CSLeft_B <= 110 && CSRight_R >= 3 && CSRight_R <= 110 && CSRight_G >= 150 && CSRight_G <= 230 && CSRight_B >= 30 && CSRight_B <= 110) ||
+		(CSLeft_R >= 0 && CSLeft_R <= 80 && CSLeft_G >= 200 && CSLeft_G <= 255 && CSLeft_B >= 0 && CSLeft_B <= 80) ||
+		(CSRight_R >= 0 && CSRight_R <= 80 && CSRight_G >= 200 && CSRight_G <= 255 && CSRight_B >= 0 && CSRight_B <= 80)
+		) 
 	{
-		if (Teleport == 1) {
-			if (NG<2 && is_on_color == 0) {
-				NG++;
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else {
-			return true;
-		}
+		return true;
 	}
 	else {
 		return false;
@@ -250,21 +270,13 @@ bool isOnGreenPoint() {
 }
 
 bool isOnBlackPoint() {
-	if ((CSRight_R < PBR && CSRight_G < PBG && CSRight_B < PBB) ||
-		(CSLeft_R < PBR && CSLeft_G < PBG && CSLeft_B < PBB))
+	if ( ((CSRight_R < PBR && CSRight_G < PBG && CSRight_B < PBB) ||
+		(CSLeft_R < PBR && CSLeft_G < PBG && CSLeft_B < PBB))/* ||
+		(CSLeft_R >= 0 && CSLeft_R <= 100 && CSLeft_B >= 0 && CSLeft_B <= 100 && CSLeft_G >= 0 && CSLeft_G <= 100) ||
+		(CSRight_R >= 0 && CSRight_R <= 100 && CSRight_B >= 0 && CSRight_B <= 100 && CSRight_G >= 0 && CSRight_G <= 100)*/
+		)
 	{
-		if (Teleport == 1) {
-			if (NB<2 && is_on_color == 0) {
-				NB++;
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else {
-			return true;
-		}
+		return true;
 	}
 	else {
 		return false;
@@ -272,20 +284,57 @@ bool isOnBlackPoint() {
 }
 
 bool isOnRedPoint() {
-	if ((CSRight_R > PRR && CSRight_G < PRG && CSRight_B < PRB) ||
-		(CSLeft_R > PRR && CSLeft_G < PRG && CSLeft_B < PRB))
+	/*if ((CSRight_R > PRR && CSRight_G < PRG && CSRight_B < PRB) ||
+		(CSLeft_R > PRR && CSLeft_G < PRG && CSLeft_B < PRB))*/
+	if ( ( (CSRight_R>225 && CSRight_R <= 255 && CSRight_G>0 && CSRight_G <= 60 && CSRight_B>0 && CSRight_B <= 60) || (CSLeft_R>225 && CSLeft_R <= 255 && CSLeft_G>0 && CSLeft_G <= 60 && CSLeft_B>0 && CSLeft_B <= 60) ) ||
+		(CSLeft_R >= 150 && CSLeft_R <= 230 && CSLeft_G >= 0 && CSLeft_G <= 55 && CSLeft_B >= 10 && CSLeft_B <= 55 && CSLeft_R >= 150 && CSLeft_R <= 230 && CSLeft_G >= 0 && CSLeft_G <= 55 && CSLeft_B >= 10 && CSLeft_B <= 55) ||
+		(CSLeft_R >= 200 && CSLeft_R <= 255 && CSLeft_G >= 0 && CSLeft_G <= 55 && CSLeft_B >= 10 && CSLeft_B <= 55) ||
+		(CSRight_R >= 200 && CSRight_R <= 255 && CSRight_G >= 0 && CSRight_G <= 55 && CSRight_B >= 10 && CSRight_B <= 55)
+		)
 	{
-		if (Teleport == 1) {
-			if (NR<2 && is_on_color == 0) {
-				NR++;
-				return true;
-			}
-			else {
-				return false;
-			}
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool isRightWheelOnDepositMap1() {
+	if (CSRight_R>190 && CSRight_R <= 245 && CSRight_G>20 && CSRight_G <= 55 && CSRight_B>=0 && CSRight_B <= 15) {
+		if (storage > 0) {
+			return true;
 		}
 		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
+}
+
+bool isLeftWheelOnDepositMap1() {
+	if (CSLeft_R>190 && CSLeft_R <= 245 && CSLeft_G>20 && CSLeft_G <= 55 && CSLeft_B>=0 && CSLeft_B <= 15) {
+		if (storage > 0) {
 			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
+}
+
+bool isOnDepositMap1() {
+	if (CSRight_R>190 && CSRight_R <= 245 && CSRight_G>20 && CSRight_G <= 55 && CSRight_B>=0 && CSRight_B <= 15 && CSLeft_R>190 && CSLeft_R <= 245 && CSLeft_G>20 && CSLeft_G <= 55 && CSLeft_B>=0 && CSLeft_B <= 15)
+	{
+		if (storage>0) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	else {
@@ -325,7 +374,7 @@ bool isOnDeposit() {
 	if ((CSLeft_B < DAB && CSLeft_G > DAG && CSLeft_R > DAR) &&
 		(CSRight_B < DAB && CSRight_G > DAG && CSRight_R > DAR))
 	{
-		if (storage>=minimumDeposit) {
+		if (storage >= minimumDeposit) {
 			return true;
 		}
 		else {
@@ -374,43 +423,75 @@ bool frontUltraSonic() {
 	}
 }
 
-
 bool checkUltrasonic() {
-	if (US_Front >= 0 && US_Front <= 10 && !(US_Right >= 0 && US_Right<10 && US_Left >= 0 && US_Left<10))
+	if (US_Right >= 0 && US_Right <= 10 && US_Left >= 0 && US_Left <= 10 && !(US_Front >= 0 && US_Front <= 15))
 	{
 		Duration = 0;
 		CurAction = 600;
 		return true;
 	}
-	else if (US_Right >= 0 && US_Right<10 && !(US_Left >= 0 && US_Left<10 && US_Front >= 0 && US_Front<10))
+	else if (US_Right >= 0 && US_Right <= 10 && US_Left >= 0 && US_Left <= 10 && US_Front >= 0 && US_Front <= 15 && (US_Right <= US_Left))
 	{
 		Duration = 0;
-		CurAction = 601;
-		return true;
+		CurAction = 601;		return true;
+
 	}
-	else if (US_Left >= 0 && US_Left <= 10 && !(US_Right >= 0 && US_Right<10 && US_Front >= 0 && US_Front<10))
+	else if (US_Right >= 0 && US_Right <= 10 && US_Left >= 0 && US_Left <= 10 && US_Front >= 0 && US_Front <= 15 && (US_Right > US_Left))
 	{
 		Duration = 0;
-		CurAction = 602;
-		return true;
+		CurAction = 602;		return true;
+
 	}
-	else if (US_Right >= 0 && US_Right<10 && US_Left >= 0 && US_Left<10)
+	///////
+	else if (US_Front >= 0 && US_Front <= 10 && !(US_Right >= 0 && US_Right <= 10 && US_Left >= 0 && US_Left <= 10) && (US_Right >= US_Left))
 	{
 		Duration = 0;
-		CurAction = 603;
-		return true;
+		CurAction = 603;		return true;
+
 	}
-	else if (US_Left >= 0 && US_Left<10 && US_Front >= 0 && US_Front<10)
+	else if (US_Front >= 0 && US_Front <= 10 && !(US_Right >= 0 && US_Right <= 10 && US_Left >= 0 && US_Left <= 10 && (US_Right >= US_Left)))
 	{
 		Duration = 0;
-		CurAction = 604;
-		return true;
+		CurAction = 604;		return true;
+
 	}
-	else if (US_Right >= 0 && US_Right<10 && US_Front >= 0 && US_Front<10)
+	////////
+	else if (US_Right >= 0 && US_Right <= 10 && !(US_Left >= 0 && US_Left <= 13 && US_Front >= 0 && US_Front <= 13 && (US_Left < US_Front)))
 	{
 		Duration = 0;
-		CurAction = 605;
-		return true;
+		CurAction = 605;		return true;
+
+	}
+	else if (US_Right >= 0 && US_Right <= 10 && US_Left >= 0 && US_Left <= 13 && US_Front >= 0 && US_Front <= 13 && (US_Left < US_Front))
+	{
+		Duration = 0;
+		CurAction = 606;		return true;
+
+	}
+	else if (US_Right >= 0 && US_Right <= 10 && US_Front >= 0 && US_Front <= 10 && !(US_Left >= 0 && US_Left <= 13))
+	{
+		Duration = 0;
+		CurAction = 607;		return true;
+
+	}
+	///////
+	else if (US_Left >= 0 && US_Left <= 10 && !(US_Right >= 0 && US_Right <= 13 && US_Front >= 0 && US_Front <= 13 && (US_Right < US_Front)))
+	{
+		Duration = 0;
+		CurAction = 608;		return true;
+
+	}
+	else if (US_Left >= 0 && US_Left <= 10 && US_Right >= 0 && US_Right <= 13 && US_Front >= 0 && US_Front <= 13 && (US_Right < US_Front))
+	{
+		Duration = 0;
+		CurAction = 609;		return true;
+
+	}
+	else if (US_Left >= 0 && US_Left <= 10 && US_Front >= 0 && US_Front <= 10 && !(US_Right >= 0 && US_Right <= 13))
+	{
+		Duration = 0;
+		CurAction = 610;		return true;
+
 	}
 	return false;
 }
@@ -647,8 +728,8 @@ void initializeRouting(int tX,int tY) {
 }
 
 bool isOnSwampLand() {
-	if ((CSLeft_R >= 130 && CSLeft_R < 215 && CSLeft_G >= 130 && CSLeft_G < 215 && CSLeft_B >= 130 && CSLeft_B < 215) ||
-		(CSRight_R >= 130 && CSRight_R < 215 && CSRight_G >= 130 && CSRight_G < 215 && CSRight_B >= 130 && CSRight_B < 215)) {
+	if ((CSLeft_R >= 130 && CSLeft_R < 190 && CSLeft_G >= 130 && CSLeft_G < 190 && CSLeft_B >= 190 && CSLeft_B < 215) ||
+		(CSRight_R >= 130 && CSRight_R < 190 && CSRight_G >= 130 && CSRight_G < 190 && CSRight_B >= 130 && CSRight_B < 190)) {
 		return true;
 	}
 	else {
@@ -677,6 +758,14 @@ void avoidSwampland() {
 		}
 	}
 
+}
+
+bool isInArea(Vector point, Area area) {
+	return area.xa <= point.x && area.xb >= point.x && area.ya <= point.y && area.yb >= point.y;
+}
+
+bool isInRect(Vector point, int xa, int ya, int xb, int yb) {
+	return isInArea(point, new_area(xa, ya, xb, yb));
 }
 
 void Map1() {
@@ -710,17 +799,17 @@ void Map1() {
 		Duration = 0;
 	}
 
-	else if (isOnDeposit()) {
+	else if (isOnDepositMap1()) {
 		CurAction = 101;
 		Duration = 50;
 	}
 
-	else if (isRightWheelOnDeposit()) {
+	else if (isRightWheelOnDepositMap1()) {
 		CurAction = 102;
 		Duration = 0;
 	}
 
-	else if (isLeftWheelOnDeposit()) {
+	else if (isLeftWheelOnDepositMap1()) {
 		CurAction = 103;
 		Duration = 0;
 	}
@@ -735,7 +824,7 @@ void Map1() {
 			}
 			else {
 				CurAction = 99;
-				Duration = 0;
+				Duration = 1;
 				is_on_color = 0;
 			}
 		}
@@ -825,41 +914,75 @@ void Map1() {
 		MyState = 0;
 		break;
 	case 600:
-		WheelLeft = -2;
-		WheelRight = 1;
+		WheelLeft = 1;
+		WheelRight = -2;
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 601:
-		WheelLeft = 2;
-		WheelRight = 4;
+		WheelLeft = 3;
+		WheelRight = -3;
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 602:
-		WheelLeft = 4;
-		WheelRight = 2;
+		WheelLeft = -3;
+		WheelRight = 3;
 		LED_1 = 0;
 		MyState = 0;
 		break;
+		/////
 	case 603:
+		WheelLeft = 1;
+		WheelRight = -2;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+	case 604:
 		WheelLeft = -2;
 		WheelRight = 1;
 		LED_1 = 0;
 		MyState = 0;
 		break;
-	case 604:
-		WheelLeft = -3;
+		//////
+	case 605:
+		WheelLeft = 1;
+		WheelRight = 3;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+	case 606:
+		WheelLeft = -1;
+		WheelRight = 3;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+	case 607:
+		WheelLeft = -1;
+		WheelRight = 2;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+		//////
+	case 608:
+		WheelLeft = 3;
 		WheelRight = 1;
 		LED_1 = 0;
 		MyState = 0;
 		break;
-	case 605:
-		WheelLeft = 1;
-		WheelRight = -3;
+	case 609:
+		WheelLeft = 3;
+		WheelRight = -1;
 		LED_1 = 0;
 		MyState = 0;
 		break;
+	case 610:
+		WheelLeft = 2;
+		WheelRight = -1;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+
 	default:
 		break;
 	}
@@ -870,6 +993,8 @@ void Map2() {
 	if (isOnMap2 == false) {
 		isOnMap2 = true;
 		storage = 0;
+		setMatris(0);
+		MS = 0;
 	}
 
 	if (SuperObj_X != 0 && SuperObj_Y != 0) {
@@ -888,6 +1013,10 @@ void Map2() {
 		Y = PositionY;
 	}
 
+	/*if (PositionX==0 && PositionY==0) {
+		counter++;
+	}*/
+
 	if (SuperDuration > 0)
 	{
 		SuperDuration--;
@@ -898,14 +1027,15 @@ void Map2() {
 		Duration--;
 	}
 
-	else if (distance(SOX,SOY)<=3 && followingSuperObject==true) {
+	/*else if (distance(SOX,SOY)<=1 && followingSuperObject==true) {
 		CurAction = 105;
 		Duration = 49;
 		SOX = 0;
 		SOY = 0;
+		timerSuperObject = 0;
 		storage++;
 		followingSuperObject = false;
-	}
+	}*/
 
 	else if (isOnBorder()) {
 		onBorder();
@@ -941,7 +1071,7 @@ void Map2() {
 		Duration = 0;
 	}
 
-	else if (isOnDeposit()) {
+	else if (isOnDeposit() || (shouldDeposit() && distance(whichDepositX(),whichDepositY())<3)) {
 		Duration = 49;
 		CurAction = 102;
 	}
@@ -962,14 +1092,30 @@ void Map2() {
 		SOX = 0;
 		SOY = 0;
 		storage++;
+		timerSuperObject = 0;
 		followingSuperObject = false;
 	}
 
 	else if (isOnBlackPoint() || isOnRedPoint() || isOnGreenPoint()) {
 		if (storage < 6) {
+			if (isOnBlackPoint() && NB<2) {
 				CurAction = 105;
 				Duration = 49;
 				storage++;
+				NB++;
+			}
+			else if (isOnRedPoint() && NR<2) {
+				CurAction = 105;
+				Duration = 49;
+				storage++;
+				NR++;
+			}
+			else if (isOnGreenPoint() && NG < 2) {
+				CurAction = 105;
+				Duration = 49;
+				storage++;
+				NG++;
+			}
 		}
 	}
 
@@ -994,7 +1140,42 @@ void Map2() {
 	}
 
 	else if (true) {
-		Duration = 0;
+		Duration = 0;		
+		if (NB > 1 && NR > 1)
+		{
+			if (MS != 2) {
+				MS = 2;
+				counter = 0;
+			}
+			setMatris(2);
+		}else if (NB>1 && NG > 1) {
+			if (MS != 1) {
+				MS = 1;
+				counter = 0;
+			}
+			setMatris(1);
+		}else if (NG>1&&NR>1) {
+			if (MS != 3) {
+				MS = 3;
+				counter = 0;
+			}
+			setMatris(3);
+		}
+		else if (NG>1) {
+			if (MS != 23) {
+				MS = 23;
+				counter = 0;
+			}
+			setMatris(23);
+		}
+		else {
+			if (MS != 0) {
+				MS = 0;
+				counter = 0;
+			}
+			setMatris(0);
+
+		}
 		CurAction = Search();
 	}
 
@@ -1157,57 +1338,103 @@ void Map2() {
 	case 3000:
 		WheelLeft = 1;
 		WheelRight = -1;
+		if (isInRect(new_vector(X,Y),245,160,360,183) || isInRect(new_vector(X, Y), 230, 180, 252, 245)) {
+			WheelLeft = 4;
+			WheelRight = -4;
+		}
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 3001:
 		WheelLeft = -1;
 		WheelRight = 1;
+		if (isInRect(new_vector(X, Y), 245, 160, 360, 183) || isInRect(new_vector(X, Y), 230, 180, 252, 245)) {
+			WheelLeft = -4;
+			WheelRight = 4;
+		}
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 4000:
 		WheelLeft = 3;
 		WheelRight = 3;
+		if (isOnSwampLand()) {
+			WheelLeft = 5;
+			WheelRight = 5;
+		}
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 600:
-		WheelLeft = -2;
-		WheelRight = 1;
+		WheelLeft = 1;
+		WheelRight = -2;
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 601:
-		WheelLeft = 2;
-		WheelRight = 4;
+		WheelLeft = 3;
+		WheelRight = -3;
 		LED_1 = 0;
 		MyState = 0;
 		break;
 	case 602:
-		WheelLeft = 4;
-		WheelRight = 2;
+		WheelLeft = -3;
+		WheelRight = 3;
 		LED_1 = 0;
 		MyState = 0;
 		break;
+		/////
 	case 603:
+		WheelLeft = 1;
+		WheelRight = -2;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+	case 604:
 		WheelLeft = -2;
 		WheelRight = 1;
 		LED_1 = 0;
 		MyState = 0;
 		break;
-	case 604:
-		WheelLeft = -3;
+		//////
+	case 605:
+		WheelLeft = 1;
+		WheelRight = 3;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+	case 606:
+		WheelLeft = -1;
+		WheelRight = 3;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+	case 607:
+		WheelLeft = -1;
+		WheelRight = 2;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+		//////
+	case 608:
+		WheelLeft = 3;
 		WheelRight = 1;
 		LED_1 = 0;
 		MyState = 0;
 		break;
-	case 605:
-		WheelLeft = 1;
-		WheelRight = -3;
+	case 609:
+		WheelLeft = 3;
+		WheelRight = -1;
 		LED_1 = 0;
 		MyState = 0;
 		break;
+	case 610:
+		WheelLeft = 2;
+		WheelRight = -1;
+		LED_1 = 0;
+		MyState = 0;
+		break;
+
 	default:
 		break;
 	}
@@ -1216,6 +1443,24 @@ void Map2() {
 DLL_EXPORT void OnTimer()
 {
 	timer = abs(480 - Time);
+	if ( (timer != timerO) ) {
+		if (followingSuperObject == false)
+		{
+			timerSearch++;
+		}
+		if (isSuperObjectAvailable()) {
+			timerSuperObject++;
+		}
+		timerO = timer;
+	}
+	if (timerSuperObject > 40 && isSuperObjectAvailable())
+	{
+		SOX = 0;
+		SOY = 0;
+		timerSuperObject = 0;
+		followingSuperObject = false;
+		
+	}
 	switch (CurGame)
 	{
 	case 0:
@@ -1230,7 +1475,6 @@ DLL_EXPORT void OnTimer()
 		break;
 	}
 }
-
 
 
 float VirtualCompass()
@@ -1332,49 +1576,230 @@ int move(int Ox, int Oy)
 	}
 }
 
+void setMatris(int T) {
+	switch (T)
+	{
+	case 0:
+		Matris[0][0] = 26;
+		Matris[1][0] = 191;
 
+		Matris[0][1] = 74;
+		Matris[1][1] = 232;
+
+		Matris[0][2] = 105;
+		Matris[1][2] = 160;
+
+		Matris[0][3] = 150;
+		Matris[1][3] = 173;
+
+		Matris[0][4] = 108;
+		Matris[1][4] = 227;
+
+		Matris[0][5] = 166;
+		Matris[1][5] = 232;
+
+		Matris[0][6] = 106;
+		Matris[1][6] = 165;
+
+		Matris[0][7] = 182;
+		Matris[1][7] = 239;
+
+		Matris[0][8] = 202;
+		Matris[1][8] = 182;
+
+		Matris[0][9] = 265;
+		Matris[1][9] = 214;
+
+		Matris[0][10] = 335;
+		Matris[1][10] = 203;
+
+		Matris[0][11] = 323;
+		Matris[1][11] = 252;
+
+		Matris[0][12] = 291;
+		Matris[1][12] = 232;
+
+		Matris[0][13] = 329;
+		Matris[1][13] = 150;
+
+		Matris[0][14] = 254;
+		Matris[1][14] = 149;
+
+		Matris[0][15] = 202;
+		Matris[1][15] = 92;
+
+		Matris[0][16] = 269;
+		Matris[1][16] = 77;
+
+		Matris[0][17] = 220;
+		Matris[1][17] = 56;
+
+		Matris[0][18] = 167;
+		Matris[1][18] = 13;
+
+		Matris[0][19] = 300;
+		Matris[1][19] = 15;
+
+		Matris[0][20] = 191;
+		Matris[1][20] = 32;
+		MN = 20;
+		break;
+	case 1:
+		Matris[0][0] = 250;//x1
+		Matris[1][0] = 100;//y1
+						   //2
+		Matris[0][1] = 210;//x1
+		Matris[1][1] = 80;//y1
+						  //3
+		Matris[0][2] = 275;//x1
+		Matris[1][2] = 55;//y1
+						  //4
+		Matris[0][3] = 210;//x1
+		Matris[1][3] = 65;//y1
+						  //5
+		Matris[0][4] = 185;//x1
+		Matris[1][4] = 20;//y1
+						  //6
+		Matris[0][5] = 275;//x1
+		Matris[1][5] = 30;//y1
+						  //7
+		Matris[0][6] = 200;//x1
+		Matris[1][6] = 25;//y1
+
+		Matris[0][7] = 185;//x1
+		Matris[1][7] = 35;//y1
+
+		Matris[0][8] = 230;//x1
+		Matris[1][8] = 85;//y1
+
+		Matris[0][9] = 270;//x1
+		Matris[1][9] = 30;//y1
+		MN = 9;
+		break;
+	case 2:
+		Matris[0][0] = 55;//x1
+		Matris[1][0] = 250;//y1
+						   //2
+		Matris[0][1] = 110;//x1
+		Matris[1][1] = 225;//y1
+						   //3
+		Matris[0][2] = 150;//x1
+		Matris[1][2] = 175;//y1
+						   //4
+		Matris[0][3] = 105;//x1
+		Matris[1][3] = 220;//y1
+						   //5
+		Matris[0][4] = 110;//x1
+		Matris[1][4] = 155;//y1
+						   //6
+		Matris[0][5] = 185;//x1
+		Matris[1][5] = 180;//y1
+						   //7
+		Matris[0][6] = 165;//x1
+		Matris[1][6] = 70;//y1
+
+		Matris[0][7] = 95;//x1
+		Matris[1][7] = 60;//y1
+
+		Matris[0][8] = 140;//x1
+		Matris[1][8] = 195;//y1
+		MN = 8;
+		break;
+	case 3:
+
+		Matris[0][0] = 330;//x1
+		Matris[1][0] = 120;//y1
+						   //2
+		Matris[0][1] = 240;//x1
+		Matris[1][1] = 140;//y1
+						   //3
+		Matris[0][2] = 320;//x1
+		Matris[1][2] = 155;//y1
+						   //4
+		Matris[0][3] = 270;//x1
+		Matris[1][3] = 200;//y1
+						   //5
+		Matris[0][4] = 330;//x1
+		Matris[1][4] = 215;//y1
+						   //6
+		Matris[0][5] = 295;//x1
+		Matris[1][5] = 255;//y1
+						   //7
+		Matris[0][6] = 265;//x1
+		Matris[1][6] = 195;//y1
+
+		Matris[0][7] = 340;//x1
+		Matris[1][7] = 250;//y1
+
+		Matris[0][8] = 300;//x1
+		Matris[1][8] = 180;//y1
+
+		MN = 8;
+
+		break;
+	case 23:
+
+		Matris[0][0] = 202;
+		Matris[1][0] = 182;
+
+		Matris[0][1] = 265;
+		Matris[1][1] = 214;
+		
+		Matris[0][2] = 335;
+		Matris[1][2] = 203;
+
+		Matris[0][3] = 323;
+		Matris[1][3] = 252;
+
+		Matris[0][4] = 291;
+		Matris[1][4] = 232;
+
+		Matris[0][5] = 329;
+		Matris[1][5] = 150;
+
+		Matris[0][6] = 254;
+		Matris[1][6] = 149;
+
+		Matris[0][7] = 202;
+		Matris[1][7] = 92;
+
+		Matris[0][8] = 269;
+		Matris[1][8] = 77;
+
+		Matris[0][9] = 220;
+		Matris[1][9] = 56;
+
+		Matris[0][10] = 167;
+		Matris[1][10] = 13;
+
+		Matris[0][11] = 300;
+		Matris[1][11] = 15;
+
+		Matris[0][12] = 191;
+		Matris[1][12] = 32;
+
+		MN = 12;
+		break;
+	default:
+		break;
+	}
+}
 
 int Search()
 {
-	//1
-	Matris[0][0] = 60;//x1
-	Matris[1][0] = 235;//y1
-					   //2
-	Matris[0][1] = 100;//x1
-	Matris[1][1] = 175;//y1
-					   //3
-	Matris[0][2] = 125;//x1
-	Matris[1][2] = 230;//y1
-					   //4
-	Matris[0][3] = 220;//x1
-	Matris[1][3] = 200;//y1
-					   //5
-	Matris[0][4] = 290;//x1
-	Matris[1][4] = 250;//y1
-					   //6
-	Matris[0][5] = 285;//x1
-	Matris[1][5] = 165;//y1
-					   //7
-	Matris[0][6] = 210;//x1
-	Matris[1][6] = 95;//y1
-
-	Matris[0][7] = 265;//x1
-	Matris[1][7] = 70;//y1
-
-	Matris[0][8] = 165;//x1
-	Matris[1][8] = 15;//y1
-
-	Matris[0][9] = 240;//x1
-	Matris[1][9] = 255;//y1
-
-
-
-
-
-	if (abs(Matris[0][counter] - X)<5 && abs(Matris[1][counter] - Y)<5)
+	if (abs(Matris[0][counter] - X) < 5 && abs(Matris[1][counter] - Y) < 5)
+	{
 		counter++;
+		timerSearch=0;
+	}
 
-	if (counter >= 12)
+	if(timerSearch>20)
+	{
+		counter++;
+		timerSearch = 0;
+	}
+
+	if (counter > MN)
 		counter = 0;
 	//printf("%d",counter);
 

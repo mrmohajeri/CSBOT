@@ -1,0 +1,3 @@
+// Deposit Area
+int depositX[] = { 15,340 };
+int depositY[] = { 15,250 };

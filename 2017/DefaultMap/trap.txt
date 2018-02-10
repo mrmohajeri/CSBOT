@@ -1,0 +1,4 @@
+// Trap
+int trapX[] = { 80,275,80 };
+int trapY[] = { 200,130,130 };
+int trapR[] = { 25,30,30 };
